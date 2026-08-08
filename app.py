@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -6,11 +7,15 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
 
+load_dotenv()  # reads GROQ_API_KEY from a local .env file, if present
+
 app = Flask(__name__)
 CORS(app)
 
-GROQ_API_KEY = "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"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 try:
+    if not GROQ_API_KEY:
+        raise ValueError("GROQ_API_KEY environment variable is not set")
     groq_client = Groq(api_key=GROQ_API_KEY)
 except Exception as e:
     print(f"Warning: Groq client failed to initialize -> {e}")
